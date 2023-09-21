@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @map("_id")
+  username String @unique
+  email String @unique
+  password String
+  avatar Json?
+  notes String @default("")
+  projects Project[]
+
+  auth_session Session[]
+  key          Key[]
+}
+
+model Project {
+  id String @id @default(uuid()) @map("_id")
+  name String
+  projectCharter String @default("")
+  completedPercent Int @default(0)
+  owner User @relation(name: "owner", references: [id], fields: [owner_id], onDelete: Cascade)
+  projectManagers User[] @relation(name: "projectManagers", references: [id], fields: [projectManagers_id])
+  members User[] @relation(name: "members", references: [id], fields: [members_id])
+  owner_id String
+  projectManagers_id String[]
+  members_id String[]
+}
+
+model Session {
+  id String @id @map("_id")
+  user_id        String
+  active_expires BigInt
+  idle_expires   BigInt
+  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+}
+
+model Key {
+  id String @id @map("_id")
+  hashed_password String?
+  user_id         String
+  user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+}
