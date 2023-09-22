@@ -33,6 +33,24 @@ model Project {
   members_id String[]
 }
 
+model Task {
+  id String @id @default(uuid()) @map("_id")
+  name String
+  description String?
+  projectId String
+  assignedTo User @relation(name: "assignedToMember",references: [id], fields: [projectId])
+  taskDependencies Task @relation(name: "taskDependency", fields: [taskDependencies_id])
+  taskDependencies_id String[]
+  dueDate DateTime
+  subtasks Subtask[]
+}
+
+model Subtask {
+  id String @id @default(uuid()) @map("_id")
+  name String
+  isCompleted Boolean
+}
+
 model Session {
   id String @id @map("_id")
   user_id        String
