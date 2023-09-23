@@ -11,13 +11,15 @@ declare global {
 	}
 	let __prisma: PrismaClient;
 
-	/// <reference types="lucia-auth" />
+	/// <reference types="lucia" />
 	declare namespace Lucia {
-		type Auth = import('$lib/server/lucia').Auth;
-		type UserAttributes = {
+		type Auth = import('./lucia.js').Auth;
+		type DatabaseUserAttributes = {
 			username: string;
-			name: string;
+			email: string;
+			password: string;
 		};
+		type DatabaseSessionAttributes = {};
 	}
 }
 
