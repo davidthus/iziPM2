@@ -16,8 +16,6 @@ model User {
   notes    String    @default("")
   projects Project[]
 
-  auth_session             Session[]
-  key                      Key[]
   OwnedProjects            Project[] @relation(name: "owner")
   ProjectManagerProjects   Project[] @relation(name: "projectManagers", fields: [ProjectManagerProjectsId], references: [id])
   ProjectManagerProjectsId String[]
@@ -25,35 +23,40 @@ model User {
   MemberProjectsId         String[]
   assignedTasks            Task[]    @relation("assignedToMember", references: [id], fields: [assignedTasksIds])
   assignedTasksIds         String[]
+
+  auth_session Session[]
+  key          Key[]
 }
 
 model Project {
-  id                String   @id @default(uuid()) @map("_id")
-  name              String
-  projectCharter    String   @default("")
-  completedPercent  Int      @default(0)
+  id               String @id @default(uuid()) @map("_id")
+  name             String
+  projectCharter   String @default("")
+  completedPercent Int    @default(0)
+
   owner             User     @relation(name: "owner", references: [id], fields: [ownerId], onDelete: Cascade)
-  projectManagers   User[]   @relation(name: "projectManagers", references: [id], fields: [projectManagersId])
-  members           User[]   @relation(name: "members", references: [id], fields: [membersId])
   ownerId           String
+  projectManagers   User[]   @relation(name: "projectManagers", references: [id], fields: [projectManagersId])
   projectManagersId String[]
+  members           User[]   @relation(name: "members", references: [id], fields: [membersId])
   membersId         String[]
   User              User?    @relation(fields: [userId], references: [id])
   userId            String?
 }
 
 model Task {
-  id                 String    @id @default(uuid()) @map("_id")
-  name               String
-  description        String?
-  projectId          String
-  assignedTo         User[]    @relation(name: "assignedToMember", references: [id], fields: [assignedToUserIds])
+  id          String    @id @default(uuid()) @map("_id")
+  name        String
+  description String?
+  projectId   String
+  dueDate     DateTime
+  subtasks    Subtask[]
+
+  assignedTo         User[]   @relation(name: "assignedToMember", references: [id], fields: [assignedToUserIds])
   assignedToUserIds  String[]
-  taskDependencies   Task[]    @relation(name: "taskDependency")
-  taskDependency     Task      @relation(name: "taskDependency", fields: [taskDependenciesId], references: [id], onUpdate: NoAction)
+  taskDependency     Task     @relation(name: "taskDependency", fields: [taskDependenciesId], references: [id], onUpdate: NoAction)
+  taskDependencies   Task[]   @relation(name: "taskDependency")
   taskDependenciesId String[]
-  dueDate            DateTime
-  subtasks           Subtask[]
 }
 
 model Subtask {
