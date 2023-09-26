@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { PageData } from './$types'
-	export let data: PageData
+	import type { PageData } from './$types';
+	export let data: PageData;
 </script>
 
 <div class="container">
@@ -20,7 +20,7 @@
 					<li><a href="/login" role="button">Login</a></li>
 				{:else}
 					<li>
-						<button formaction="/logout" type="submit" role="button">Logout</button>
+						<button formaction="/logout" type="submit">Logout</button>
 					</li>
 				{/if}
 			</form>
